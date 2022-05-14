@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+{{template "head.html"}}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+
+<body>
+{{template "navbar.html"}}
+<br>
+<main>
+  <div class="container py-4">
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-lg bg-dark row text-white">
+            <div id="alert" class="alert alert-warning alert-dismissible fade show" hidden role="alert">
+              <strong>Holy guacamole!</strong><p id="message"></p>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+      <div class="container-fluid py-5  bg-dark col-8 text-center">
+        <h1 class="display-5 fw-bold">Spotify Playlist Generator</h1>
+        <hr>
+        <p>We don't save anything regarding spotify credentials, spotify handles the authentication and you will be asked to sign in to spotify to verify this app. After that sign first in spotify will remember us! :)</p>
+<form id="ye" class="row row-cols-auto g-3 align-items-center" name="form" method="POST" onsubmit="return validateForm()" >
+  <div class="col-12">
+    <label class="visually-hidden" for="inlineFormInputGroupUsername">Username</label>
+    <div class="input-group">
+      <div class="input-group-text">Spotify username</div>
+      <input id="username" name="username" type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Username">
+    </div>
+  </div>
+
+    <div class="col-12">
+    <label class="visually-hidden" for="inlineFormInputGroupUsername">Username</label>
+    <div class="input-group">
+      <div class="input-group-text">Name of playlist</div>
+      <input id="playlist" name="playlist" type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Playlist name">
+    </div>
+  </div>
+
+  <div class="col-12">
+    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+    <select id="method" class="form-select" id="inlineFormSelectPref" name="method" onchange="checkMethod()">
+      <option value="" selected>How should we select the songs?</option>
+      <option value="random">Fully random</option>
+      <option value="genres">Let me choose the genres</option>
+    </select>
+  </div>
+
+  <div id="gen" class="col-12" hidden>
+  <select id="genres" data-placeholder="Search for up to 4 genres..." multiple class="chosen-select form-select" name="genres">
+    <option value=""></option>
+    {{range $w := .}} 
+      <option value="{{$w}}">{{$w}}</option>
+    {{end}}
+  </select>
+  </div>
+
+  <div class="col-12">
+    <label for="customRange2" class="form-label">How many songs?</label>
+    <input name="songs" id="ageInputId" type="range" class="form-range" min="1" max="100" value="50" oninput="ageOutputId.value = ageInputId.value">
+    <output name="songs" id="ageOutputId">50</output>
+  </div>
+
+  <div class="col-12">
+    <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+    <button class="g-recaptcha btn btn-primary" 
+        data-sitekey="6Ld9V4EdAAAAAAop9vI_pUtl_ZUgKarAMPOb7Bk7" 
+        data-callback='onSubmit' 
+        data-action='submit' type="submit">Submit</button>
+  </div>
+</form>
+      </div>
+    </div>
+
+    <footer class="pt-3 mt-4 text-muted border-top">
+      &copy; 2021 cloudbot.se
+    </footer>
+  </div>
+</main>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+
+
+<script type="text/javascript">
+  $(".chosen-select").chosen({
+  no_results_text: "Oops, nothing found!",
+  max_selected_options:4,
+  width:"768px"
+  })
+</script>
+<script type="text/javascript">
+   function onSubmit(token) {
+
+
+    if(validateForm()){
+      document.getElementById("ye").submit();
+    }
+   }
+  function validateForm() {
+  let a = document.getElementById('alert');
+  let b = document.getElementById('message');
+  // a.removeAttribute("hidden"); 
+  let username = document.forms["form"]["username"].value;
+  let playlist = document.forms["form"]["playlist"].value;
+  let method = document.forms["form"]["method"].value;
+  if (username == "") {
+    document.getElementById("username").focus();
+    a.removeAttribute("hidden"); 
+    b.innerHTML = "Username must be filled out";
+    return false;
+  }
+  if (playlist == "") {
+    document.getElementById("playlist").focus();
+    a.removeAttribute("hidden"); 
+    b.innerHTML = "Playlist must be filled out";
+    return false;
+  }
+  console.log(method);
+    if (method == "") {
+    document.getElementById("method").focus();
+    a.removeAttribute("hidden"); 
+    b.innerHTML = "Method of randomize must be filled out";
+    return false;
+  }
+
+  if(method == "genres"){
+    obj = document.getElementById('genres');
+    if (obj.value === "") {
+    document.getElementById("genres").focus();
+    a.removeAttribute("hidden"); 
+    b.innerHTML = "Genres must be filled out";
+    return false;
+  }
+  }
+    
+
+  return true;
+} 
+
+function checkMethod() {
+  let method = document.forms["form"]["method"].value;
+  let a = document.getElementById('gen');
+  let b = document.getElementById('genres');
+  if (method == "genres") {
+    a.removeAttribute("hidden");
+  }else if(method == "random" || method == ""){
+    a.setAttribute("hidden", "");
+  }
+  //   if (method != "random" && a.hasAttribute("hidden")) {
+  //   a.setAttribute("hidden", "");
+  // }
+  return true;
+}
+</script>
+
+
+</body>
+</html>
